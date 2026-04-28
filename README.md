@@ -1,26 +1,67 @@
 # Smart Campus API
 
+Name: Janithya Vinuthmi Wadumethrige
+Student ID: 20241447 / w2153566
+Module: 5COSC022C.2 Client-Server Architectures
+Assignment: Individual Coursework
+
+
 ## Project Description
-This project is a RESTful API developed using Java, JAX-RS (Jersey), and Grizzly HTTP Server.
+This project is a fully RESTful API developed using Java, JAX-RS (Jersey), and the Grizzly HTTP server for a Smart Campus system.
 
-It manages a Smart Campus system including:
-- Rooms
-- Sensors
-- Sensor Readings
+The API is designed to manage Rooms and their associated Sensors, while also maintaining a collection of Sensor Readings over time. It allows clients to create, retrieve, filter, and manage these resources through standard RESTful endpoints.
 
-The API allows users to create, retrieve, filter, and manage data using RESTful principles.
+All data is stored in-memory using efficient data structures such as HashMap, without relying on any external database. The system also includes features like query-based filtering, nested resources for sensor readings, exception handling, and request/response logging to simulate a real-world backend service.
 
 ---
+## Discovery Endpoint
 
-## How to Run
-
-1. Open the project in NetBeans
-2. Right-click the project → Run
-3. Server will start at:
-   http://localhost:8081/api/v1/
-
+### GET /api/v1
+```json
+{
+  "name": "Smart Campus API",
+  "version": "v1",
+  "contact": "admin@smartcampus.com",
+  "links": {
+    "rooms": "/api/v1/rooms",
+    "sensors": "/api/v1/sensors"
+  }
+}
+```
 ---
+## Data Models
 
+The system is built around three main entities that represent the Smart Campus environment.
+
+### Room
+A Room represents a location within the campus where sensors are installed.
+
+```json
+{
+  "id": "CLS-102",
+  "name": "Classroom 102",
+  "capacity": 45,
+  "sensorIds": []
+}
+```
+### Sensor
+```json
+{
+  "id": "SEN-001",
+  "type": "Temperature",
+  "status": "ACTIVE",
+  "currentValue": 25.5,
+  "roomId": "CLS-102"
+}
+```
+### SensorReading
+```json
+{
+  "id": "READ-001",
+  "timestamp": 1713439200000,
+  "value": 26.0
+}
+```
 ## API Endpoints
 
 ### Rooms
@@ -41,33 +82,41 @@ The API allows users to create, retrieve, filter, and manage data using RESTful 
 
 ---
 
-## 🧪 Sample CURL Commands
+## Sample CURL Commands
+### 1. Discovery endpoint
+```bash
+curl http://localhost:8081/api/v1/
+```
 
-### 1. Create Room
+### 2. Create Room
 ```bash
 curl -X POST http://localhost:8081/api/v1/rooms \
 -H "Content-Type: application/json" \
--d '{"id":"LIB-301","name":"Library","capacity":40}'
+-d '{"id":"CLS-102","name":"Classroom 102","capacity":45}'
 ```
-### 2. Get Rooms
+### 3. Get Rooms
 ```bash
 curl http://localhost:8081/api/v1/rooms
 ```
-### 3. Create Sensor
+### 4. Create Sensor
 ```bash
 curl -X POST http://localhost:8081/api/v1/sensors \
 -H "Content-Type: application/json" \
--d '{"id":"SEN-001","type":"Temperature","status":"ACTIVE","currentValue":25.5,"roomId":"LIB-301"}'
+-d '{"id":"SEN-001","type":"Temperature","status":"ACTIVE","currentValue":25.5,"roomId":"CLS-102"}'
 ```
-### 4. Filter Sensors
+### 5.Get Sensors
+```bash
+curl http://localhost:8081/api/v1/sensors
+```
+### 6. Filter Sensors
 ```bash
 curl http://localhost:8081/api/v1/sensors?type=Temperature
 ```
-### 5. Add Sensor Reading
+### 7. Add Sensor Reading
 ```bash
 curl -X POST http://localhost:8081/api/v1/sensors/SEN-001/readings \
 -H "Content-Type: application/json" \
--d '{"id":"R1","timestamp":1710000000,"value":28.5}'
+-d '{"id":"READ-001","timestamp":1713439200000,"value":26.0}'
 ```
 ## Error Handling
 

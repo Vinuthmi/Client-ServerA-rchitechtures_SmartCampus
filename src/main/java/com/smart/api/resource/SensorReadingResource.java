@@ -32,14 +32,14 @@ public class SensorReadingResource {
 
         Sensor sensor = DataStore.sensors.get(sensorId);
         
-        if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
-            throw new SensorUnavailableException("Sensor is under maintenance and cannot accept readings");
-        }
-
         if (sensor == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Sensor not found")
                     .build();
+        }
+        
+        if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
+            throw new SensorUnavailableException("Sensor is under maintenance and cannot accept readings");
         }
 
         DataStore.readings

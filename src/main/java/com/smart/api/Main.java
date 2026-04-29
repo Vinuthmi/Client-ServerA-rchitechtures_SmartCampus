@@ -11,12 +11,19 @@ public class Main {
     public static final String BASE_URI = "http://localhost:8081/api/v1/";
 
     public static HttpServer startServer() {
-        final ResourceConfig rc = new ResourceConfig().packages("com.smart.api");
+        final ResourceConfig rc = new ResourceConfig().packages("com.smart.api.resource");
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
     public static void main(String[] args) {
         final HttpServer server = startServer();
-        System.out.println("Server started at " + BASE_URI);
+        System.out.println(" Server started at: " + BASE_URI);
+        System.out.println("Press Enter to stop...");
+        try {
+            System.in.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        server.shutdownNow();
     }
 }

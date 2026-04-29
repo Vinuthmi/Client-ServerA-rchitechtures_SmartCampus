@@ -1,5 +1,6 @@
 package com.smart.api.resource;
 
+import com.smart.api.exception.RoomNotEmptyException;
 import com.smart.api.model.Room;
 import com.smart.api.store.DataStore;
 
@@ -7,8 +8,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-
-import com.smart.api.exception.RoomNotEmptyException;
 
 @Path("/rooms")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,29 +35,37 @@ public class RoomResource {
 
         if (room == null) {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Room not found")
+                    .entity("{\"error\":\"Room not found\"}")
                     .build();
         }
 
         return Response.ok(room).build();
     }
 
-    @DELETE
-    @Path("/{roomId}")
-    public Response deleteRoom(@PathParam("roomId") String roomId) {
+   @DELETE
+   @Path("/{roomId}")
+   public Response deleteRoom(@PathParam("roomId") String roomId) {
+
         Room room = DataStore.rooms.get(roomId);
 
         if (room == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Room not found")
-                    .build();
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("{\"error\":\"Room not found\"}")
+                .build();
         }
+        
+   
+        boolean hasSensors = DataStore.sensors.values()
+                .stream()
+                .anyMatch(sensor -> roomId.equals(sensor.getRoomId()));
 
-        if (!room.getSensorIds().isEmpty()) {
+        if (hasSensors) {
             throw new RoomNotEmptyException("Room cannot be deleted because it has sensors");
         }
 
         DataStore.rooms.remove(roomId);
-        return Response.ok("Room deleted successfully").build();
+
+        return Response.ok("{\"message\":\"Room deleted successfully\"}")
+                .build();
     }
 }
